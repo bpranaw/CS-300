@@ -1,13 +1,18 @@
 import java.util.Scanner;
 
 class terminal {
-    // Scanner input = new Scanner(System.in);
     public static void main(String[] args) {
         int choice;
         do {
             choice = terminal_main();
-            if (choice == 1) provider_main();
-            else if (choice == 2) manager_main();
+            if (choice == 1) {
+                provider temp = new provider();
+                temp.provider_main();
+            }
+            else if (choice == 2) {
+                manager temp = new manager();
+                temp.manager_main();
+            }
 
         } while (choice != 3);
         return;        
@@ -34,15 +39,6 @@ class terminal {
         }
         return choice;
     }
-
-    public static void provider_main() {
-        System.out.println("You are int the Provider's Terminal");
-        return;
-    }
-
-    public static void manager_main() {
-        System.out.println("You are in the Manager's Terminal");
-        return;
-    }
+    
 }
 
