@@ -13,7 +13,6 @@ public class database{
         try {
             reader = new BufferedReader(new FileReader(file));
             String tempString;
-            int line = 1;
             int count = 0;
             String[]a_provider = new String[7];
             while ((tempString = reader.readLine()) != null)
