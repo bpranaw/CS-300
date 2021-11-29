@@ -1,72 +1,31 @@
 package terminal;
 
-public class member_data
+public class provider_data
 {
     private int ID;
     private int zip;
-    private boolean status;
+
     private String num;
-    private String member_name;
+    private String provider_name;
     private String street_name;
     private String city;
     private String state;
 
-    public member_data()
+
+    public provider_data()
     {
     }
 
-    public member_data(int ID, int zip, boolean status, String num, String member_name, String street_name, String city, String state)
+    public provider_data(int ID, int zip, String num, String provider_name, String street_name, String city, String state)
     {
         this.ID = ID;
         this.zip = zip;
-        this.status = status;
         this.num = num;
-        this.member_name = member_name;
+        this.provider_name = provider_name;
         this.street_name = street_name;
         this.city = city;
         this.state = state;
     }
-
-    public void setID(int ID)
-    {
-        this.ID = ID;
-    }
-
-    public void setZip(int zip)
-    {
-        this.zip = zip;
-    }
-
-    public void setStatus(boolean status)
-    {
-        this.status = status;
-    }
-
-    public void setNum(String num)
-    {
-        this.num = num;
-    }
-
-    public void setMember_name(String member_name)
-    {
-        this.member_name = member_name;
-    }
-
-    public void setStreet_name(String street_name)
-    {
-        this.street_name = street_name;
-    }
-
-    public void setCity(String city)
-    {
-        this.city = city;
-    }
-
-    public void setState(String state)
-    {
-        this.state = state;
-    }
-
 
     public int getID()
     {
@@ -78,19 +37,14 @@ public class member_data
         return zip;
     }
 
-    public boolean isStatus()
-    {
-        return status;
-    }
-
     public String getNum()
     {
         return num;
     }
 
-    public String getMember_name()
+    public String getProvider_name()
     {
-        return member_name;
+        return provider_name;
     }
 
     public String getStreet_name()
@@ -106,5 +60,40 @@ public class member_data
     public String getState()
     {
         return state;
+    }
+
+    public void setID(int ID)
+    {
+        this.ID = ID;
+    }
+
+    public void setZip(int zip)
+    {
+        this.zip = zip;
+    }
+
+    public void setNum(String num)
+    {
+        this.num = num;
+    }
+
+    public void setProvider_name(String provider_name)
+    {
+        this.provider_name = provider_name;
+    }
+
+    public void setStreet_name(String street_name)
+    {
+        this.street_name = street_name;
+    }
+
+    public void setCity(String city)
+    {
+        this.city = city;
+    }
+
+    public void setState(String state)
+    {
+        this.state = state;
     }
 }
