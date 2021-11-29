@@ -4,63 +4,101 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class database{
+/***********************
+ * Example to use database:
+ * database d = new database();
+ * d.boot();
+ * ...
+ * d.print_provider();
+ * ...
+ * d.shut();
+ * ***********************/
 
-    public static void provider_reader(ArrayList<provider_data> provider_list)
+
+public class database
+{
+
+    private static ArrayList<provider_data> provider_list;
+    private static ArrayList<member_data> member_list;
+
+    public static void boot()       //remember to boot() before use the database
+    {
+        provider_list = new ArrayList<>();
+        member_list = new ArrayList<>();
+        provider_reader();
+        member_reader();
+    }
+
+    public static void shut() throws IOException    //remember to shut() after use the database
+    {
+        provider_writer();
+        member_writer();
+    }
+
+    public static void provider_reader()
     {
         File file = new File("src\\terminal\\provider_list.txt");
         BufferedReader reader = null;
-        try {
+        try
+        {
             reader = new BufferedReader(new FileReader(file));
             String tempString;
             int count = 0;
-            String[]a_provider = new String[7];
+            String[] a_provider = new String[7];
             while ((tempString = reader.readLine()) != null)
             {
                 a_provider[count] = tempString;
                 count++;
-                if(count == 7)
+                if (count == 7)
                 {
                     provider_data pd = new provider_data();
-                    pd.num = a_provider[0];
-                    pd.provider_name = a_provider[1];
-                    pd.ID = Integer.parseInt(a_provider[2]);
-                    pd.street_name = a_provider[3];
-                    pd.city = a_provider[4];
-                    pd.state = a_provider[5];
-                    pd.zip = Integer.parseInt(a_provider[6]);
+                    pd.setNum(a_provider[0]);
+                    pd.setProvider_name(a_provider[1]);
+                    pd.setID(Integer.parseInt(a_provider[2]));
+                    pd.setStreet_name(a_provider[3]);
+                    pd.setCity(a_provider[4]);
+                    pd.setState(a_provider[5]);
+                    pd.setZip(Integer.parseInt(a_provider[6]));
                     provider_list.add(pd);
 
                     count = 0;
                 }
             }
             reader.close();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
+        } finally
+        {
+            if (reader != null)
+            {
+                try
+                {
                     reader.close();
-                } catch (IOException e1) {
+                } catch (IOException e1)
+                {
                 }
             }
         }
     }
 
-    public static void print_providers(ArrayList<provider_data> provider_list)
+    public static void print_providers()
     {
-        for(provider_data pd:provider_list)
+        int i = 1;
+        for (provider_data pd : provider_list)
         {
-            System.out.println("provider name: " + pd.provider_name);
-            System.out.println("provider ID: " + pd.ID);
-            System.out.println("provider street name: " + pd.street_name);
-            System.out.println("provider city: " + pd.city);
-            System.out.println("provider state: " + pd.state);
-            System.out.println("provider zip code: " + pd.zip);
+            System.out.println(i++);
+            System.out.println("provider name: " + pd.getProvider_name());
+            System.out.println("provider ID: " + pd.getID());
+            System.out.println("provider street name: " + pd.getStreet_name());
+            System.out.println("provider city: " + pd.getCity());
+            System.out.println("provider state: " + pd.getState());
+            System.out.println("provider zip code: " + pd.getZip());
+            System.out.println();
         }
     }
 
-    public static void provider_writer(ArrayList<provider_data> provider_list) throws IOException
+    public static void provider_writer() throws IOException
     {
         FileWriter fw = new FileWriter("src\\terminal\\provider_list.txt");
 
@@ -68,24 +106,24 @@ public class database{
         int index = 0;
         int order = 1;
         String num;
-        for(provider_data pd:provider_list)
+        for (provider_data pd : provider_list)
         {
             num = Integer.toString(order);
             num += ")";
             writer.write(num);
             writer.newLine();
-            writer.write(pd.provider_name);
+            writer.write(pd.getProvider_name());
             writer.newLine();
-            writer.write(Integer.toString(pd.ID));
+            writer.write(Integer.toString(pd.getID()));
             writer.newLine();
-            writer.write(pd.street_name);
+            writer.write(pd.getStreet_name());
             writer.newLine();
-            writer.write(pd.city);
+            writer.write(pd.getCity());
             writer.newLine();
-            writer.write(pd.state);
+            writer.write(pd.getState());
             writer.newLine();
-            writer.write(Integer.toString(pd.zip));
-            if(index != provider_list.size()-1)
+            writer.write(Integer.toString(pd.getZip()));
+            if (index != provider_list.size() - 1)
             {
                 writer.newLine();
             }
@@ -98,7 +136,7 @@ public class database{
 
     }
 
-    public static void add_provider(ArrayList<provider_data> provider_list)
+    public static void add_provider()
     {
         Scanner sc = new Scanner(System.in);
         provider_data pd = new provider_data();
@@ -106,36 +144,36 @@ public class database{
         int integer_input;
         System.out.println("Enter provider's name: ");
         string_input = sc.next();
-        pd.provider_name = string_input;
+        pd.setProvider_name(string_input);
         System.out.println("Enter provider's ID: ");
         integer_input = sc.nextInt();
-        pd.ID = integer_input;
+        pd.setID(integer_input);
         System.out.println("Enter street's name: ");
         string_input = sc.next();
-        pd.street_name = string_input;
+        pd.setStreet_name(string_input);
         System.out.println("Enter city: ");
         string_input = sc.next();
-        pd.city = string_input;
+        pd.setCity(string_input);
         System.out.println("Enter state: ");
         string_input = sc.next();
-        pd.state = string_input;
+        pd.setState(string_input);
         System.out.println("Enter zip code: ");
         integer_input = sc.nextInt();
-        pd.zip = integer_input;
+        pd.setZip(integer_input);
 
         provider_list.add(pd);
     }
 
-    public static void remove_provider(ArrayList<provider_data> provider_list)
+    public static void remove_provider()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
         int index = 0;
         System.out.println("Enter the provider ID to remove: ");
         ID = sc.nextInt();
-        for(provider_data pd:provider_list)
+        for (provider_data pd : provider_list)
         {
-            if(ID == pd.ID)
+            if (ID == pd.getID())
             {
                 provider_list.remove(index);
                 System.out.println("Removed");
@@ -148,121 +186,124 @@ public class database{
 
     }
 
-    public static void update_provider(ArrayList<provider_data> provider_list)
+    public static void update_provider()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
         String choice;
         System.out.println("Enter the provider ID to update: ");
         ID = sc.nextInt();
-        for(provider_data pd:provider_list)
+        for (provider_data pd : provider_list)
         {
-            if(ID == pd.ID)
+            if (ID == pd.getID())
             {
-                System.out.println("provider name: " + pd.provider_name);
-                System.out.println("provider ID: " + pd.ID);
-                System.out.println("provider street name: " + pd.street_name);
-                System.out.println("provider city: " + pd.city);
-                System.out.println("provider state: " + pd.state);
-                System.out.println("provider zip code: " + pd.zip);
+                System.out.println("provider name: " + pd.getProvider_name());
+                System.out.println("provider ID: " + pd.getID());
+                System.out.println("provider street name: " + pd.getStreet_name());
+                System.out.println("provider city: " + pd.getCity());
+                System.out.println("provider state: " + pd.getState());
+                System.out.println("provider zip code: " + pd.getZip());
                 System.out.println("Do you want to update the information of this provider?\n1: YES\n2: NO");
                 choice = sc.next();
-                if(choice.equals("1") || choice.equals("YES")|| choice.equals("yes") || choice.equals("Yes") || choice.equals("y") || choice.equals("Y"))
+                if (choice.equals("1") || choice.equals("YES") || choice.equals("yes") || choice.equals("Yes") || choice.equals("y") || choice.equals("Y"))
                 {
                     String string_input;
                     int integer_input;
                     System.out.println("Enter provider's name: ");
                     string_input = sc.next();
-                    pd.provider_name = string_input;
+                    pd.setProvider_name(string_input);
                     System.out.println("Enter provider's ID: ");
                     integer_input = sc.nextInt();
-                    pd.ID = integer_input;
+                    pd.setID(integer_input);
                     System.out.println("Enter street's name: ");
                     string_input = sc.next();
-                    pd.street_name = string_input;
+                    pd.setStreet_name(string_input);
                     System.out.println("Enter city: ");
                     string_input = sc.next();
-                    pd.city = string_input;
+                    pd.setCity(string_input);
                     System.out.println("Enter state: ");
                     string_input = sc.next();
-                    pd.state = string_input;
+                    pd.setState(string_input);
                     System.out.println("Enter zip code: ");
                     integer_input = sc.nextInt();
-                    pd.zip = integer_input;
+                    pd.setZip(integer_input);
                     System.out.println("Updated");
                     return;
                 }
-                if(choice.equals("2") || choice.equals("NO")|| choice.equals("No") || choice.equals("no") || choice.equals("n") || choice.equals("N"))
-                {
-                    return;
-                }
-                else
+                if (!choice.equals("2") || !choice.equals("NO") || !choice.equals("No") || !choice.equals("no") || !choice.equals("n") || !choice.equals("N"))
                 {
                     System.out.println("Error");
-                    return;
                 }
+                return;
             }
         }
         System.out.println("ID not found");
     }
 
 
-
-    public static void member_reader(ArrayList<member_data> member_list)
+    public static void member_reader()
     {
         File file = new File("src\\terminal\\member_list.txt");
         BufferedReader reader = null;
-        try {
+        try
+        {
             reader = new BufferedReader(new FileReader(file));
             String tempString;
             int count = 0;
-            String[]a_member = new String[7];
+            String[] a_member = new String[7];
             while ((tempString = reader.readLine()) != null)
             {
                 a_member[count] = tempString;
                 count++;
-                if(count == 7)
+                if (count == 7)
                 {
                     member_data md = new member_data();
-                    md.num = a_member[0];
-                    md.member_name = a_member[1];
-                    md.ID = Integer.parseInt(a_member[2]);
-                    md.street_name = a_member[3];
-                    md.city = a_member[4];
-                    md.state = a_member[5];
-                    md.zip = Integer.parseInt(a_member[6]);
+                    md.setNum(a_member[0]);
+                    md.setMember_name(a_member[1]);
+                    md.setID(Integer.parseInt(a_member[2]));
+                    md.setStreet_name(a_member[3]);
+                    md.setCity(a_member[4]);
+                    md.setState(a_member[5]);
+                    md.setZip(Integer.parseInt(a_member[6]));
                     member_list.add(md);
-
                     count = 0;
                 }
             }
             reader.close();
-        } catch (IOException e) {
+        } catch (IOException e)
+        {
             e.printStackTrace();
-        } finally {
-            if (reader != null) {
-                try {
+        } finally
+        {
+            if (reader != null)
+            {
+                try
+                {
                     reader.close();
-                } catch (IOException e1) {
+                } catch (IOException e1)
+                {
                 }
             }
         }
     }
 
-    public static void print_members(ArrayList<member_data> member_list)
+    public static void print_members()
     {
-        for(member_data md:member_list)
+        int i = 1;
+        for (member_data md : member_list)
         {
-            System.out.println("member name: " + md.member_name);
-            System.out.println("member ID: " + md.ID);
-            System.out.println("member street name: " + md.street_name);
-            System.out.println("member city: " + md.city);
-            System.out.println("member state: " + md.state);
-            System.out.println("member zip code: " + md.zip);
+            System.out.println(i++);
+            System.out.println("member name: " + md.getMember_name());
+            System.out.println("member ID: " + md.getID());
+            System.out.println("member street name: " + md.getStreet_name());
+            System.out.println("member city: " + md.getCity());
+            System.out.println("member state: " + md.getState());
+            System.out.println("member zip code: " + md.getZip());
+            System.out.println();
         }
     }
 
-    public static void member_writer(ArrayList<member_data> member_list) throws IOException
+    public static void member_writer() throws IOException
     {
         FileWriter fw = new FileWriter("src\\terminal\\member_list.txt");
 
@@ -270,24 +311,24 @@ public class database{
         int order = 1;
         int index = 0;
         String num;
-        for(member_data md:member_list)
+        for (member_data md : member_list)
         {
             num = Integer.toString(order);
             num += ")";
             writer.write(num);
             writer.newLine();
-            writer.write(md.member_name);
+            writer.write(md.getMember_name());
             writer.newLine();
-            writer.write(Integer.toString(md.ID));
+            writer.write(Integer.toString(md.getID()));
             writer.newLine();
-            writer.write(md.street_name);
+            writer.write(md.getStreet_name());
             writer.newLine();
-            writer.write(md.city);
+            writer.write(md.getCity());
             writer.newLine();
-            writer.write(md.state);
+            writer.write(md.getState());
             writer.newLine();
-            writer.write(Integer.toString(md.zip));
-            if(index != member_list.size()-1)
+            writer.write(Integer.toString(md.getZip()));
+            if (index != member_list.size() - 1)
             {
                 writer.newLine();
             }
@@ -299,7 +340,7 @@ public class database{
 
     }
 
-    public static void add_member(ArrayList<member_data> member_list)
+    public static void add_member()
     {
         Scanner sc = new Scanner(System.in);
         member_data md = new member_data();
@@ -307,37 +348,37 @@ public class database{
         int integer_input;
         System.out.println("Enter member's name: ");
         string_input = sc.next();
-        md.member_name = string_input;
+        md.setMember_name(string_input);
         System.out.println("Enter member's ID: ");
         integer_input = sc.nextInt();
-        md.ID = integer_input;
+        md.setID(integer_input);
         System.out.println("Enter member's name: ");
         string_input = sc.next();
-        md.street_name = string_input;
+        md.setStreet_name(string_input);
         System.out.println("Enter city: ");
         string_input = sc.next();
-        md.city = string_input;
+        md.setCity(string_input);
         System.out.println("Enter state: ");
         string_input = sc.next();
-        md.state = string_input;
+        md.setState(string_input);
         System.out.println("Enter zip code: ");
         integer_input = sc.nextInt();
-        md.zip = integer_input;
+        md.setZip(integer_input);
 
         member_list.add(md);
     }
 
 
-    public static void remove_member(ArrayList<member_data> member_list)
+    public static void remove_member()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
         int index = 0;
         System.out.println("Enter the member ID to remove: ");
         ID = sc.nextInt();
-        for(member_data md:member_list)
+        for (member_data md : member_list)
         {
-            if(ID == md.ID)
+            if (ID == md.getID())
             {
                 member_list.remove(index);
                 System.out.println("Removed");
@@ -350,55 +391,55 @@ public class database{
 
     }
 
-    public static void update_member(ArrayList<member_data> member_list)
+    public static void update_member()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
         String choice;
         System.out.println("Enter the member ID to update: ");
         ID = sc.nextInt();
-        for(member_data md:member_list)
+        for (member_data md : member_list)
         {
-            if(ID == md.ID)
+            if (ID == md.getID())
             {
-                System.out.println("provider name: " + md.member_name);
-                System.out.println("provider ID: " + md.ID);
-                System.out.println("provider street name: " + md.street_name);
-                System.out.println("provider city: " + md.city);
-                System.out.println("provider state: " + md.state);
-                System.out.println("provider zip code: " + md.zip);
+                System.out.println("provider name: " + md.getMember_name());
+                System.out.println("provider ID: " + md.getID());
+                System.out.println("provider street name: " + md.getStreet_name());
+                System.out.println("provider city: " + md.getCity());
+                System.out.println("provider state: " + md.getState());
+                System.out.println("provider zip code: " + md.getZip());
                 System.out.println("Do you want to update the information of this member?\n1: YES\n2: NO");
                 choice = sc.next();
-                if(choice.equals("1") || choice.equals("YES")|| choice.equals("yes") || choice.equals("Yes") || choice.equals("y") || choice.equals("Y"))
+                if (choice.equals("1") || choice.equals("YES") || choice.equals("yes") || choice.equals("Yes") || choice.equals("y") || choice.equals("Y"))
                 {
                     String string_input;
                     int integer_input;
                     System.out.println("Enter member's name: ");
                     string_input = sc.next();
-                    md.member_name = string_input;
+                    md.setMember_name(string_input);
                     System.out.println("Enter member's ID: ");
                     integer_input = sc.nextInt();
-                    md.ID = integer_input;
-                    System.out.println("Enter street's name: ");
+                    md.setID(integer_input);
+                    System.out.println("Enter member's name: ");
                     string_input = sc.next();
-                    md.street_name = string_input;
+                    md.setStreet_name(string_input);
                     System.out.println("Enter city: ");
                     string_input = sc.next();
-                    md.city = string_input;
+                    md.setCity(string_input);
                     System.out.println("Enter state: ");
                     string_input = sc.next();
-                    md.state = string_input;
+                    md.setState(string_input);
                     System.out.println("Enter zip code: ");
                     integer_input = sc.nextInt();
-                    md.zip = integer_input;
+                    md.setZip(integer_input);
                     System.out.println("Updated");
+
                     return;
                 }
-                if(choice.equals("2") || choice.equals("NO")|| choice.equals("No") || choice.equals("no") || choice.equals("n") || choice.equals("N"))
+                if (choice.equals("2") || choice.equals("NO") || choice.equals("No") || choice.equals("no") || choice.equals("n") || choice.equals("N"))
                 {
                     return;
-                }
-                else
+                } else
                 {
                     System.out.println("Error");
                     return;
@@ -408,58 +449,4 @@ public class database{
         System.out.println("ID not found");
 
     }
-    //for testing
-    /*
-    public static void main(String[] args) throws IOException
-    {
-        ArrayList<provider_data> provider_list = new ArrayList<>();
-        ArrayList<member_data> member_list = new ArrayList<>();
-        provider_reader(provider_list);
-        member_reader(member_list);
-
-        Scanner sc = new Scanner(System.in);
-
-        int choice = 1;
-        while(choice != 0)
-        {
-            System.out.println("1: print provider \n2: print member \n3: add provider\n4: add member\n5: remove provider\n6: remove " +
-                    "member\n7: update provider\n8: update member");
-            choice = sc.nextInt();
-            if(choice == 1)
-            {
-                print_providers(provider_list);
-            }
-            if(choice == 2)
-            {
-                print_members(member_list);
-            }
-            if(choice == 3)
-            {
-                add_provider(provider_list);
-            }
-            if (choice == 4)
-            {
-                add_member(member_list);
-            }
-            if(choice == 5)
-            {
-                remove_provider(provider_list);
-            }
-            if(choice == 6)
-            {
-                remove_member(member_list);
-            }
-            if(choice == 7)
-            {
-                update_provider(provider_list);
-            }
-            if (choice == 8)
-            {
-                update_member(member_list);
-            }
-        }
-        provider_writer(provider_list);
-        member_writer(member_list);
-    }
-    */
 }
