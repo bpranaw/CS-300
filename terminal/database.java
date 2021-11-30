@@ -31,7 +31,7 @@ public class database
         provider_list = new ArrayList<>();
         member_list = new ArrayList<>();
         directory_list = new ArrayList<>();
-        record_list = new ArrayList<>();
+        //record_list = new ArrayList<>();
         provider_reader();
         member_reader();
         pd_reader();
