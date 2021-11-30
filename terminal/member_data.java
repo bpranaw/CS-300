@@ -4,6 +4,7 @@ public class member_data
 {
     private int ID;
     private int zip;
+    private int consults;
     private boolean status;
     private String num;
     private String member_name;
@@ -11,14 +12,18 @@ public class member_data
     private String city;
     private String state;
 
+
+
     public member_data()
     {
+        consults = 0;
     }
 
-    public member_data(int ID, int zip, boolean status, String num, String member_name, String street_name, String city, String state)
+    public member_data(int ID, int zip, int consults, boolean status, String num, String member_name, String street_name, String city, String state)
     {
         this.ID = ID;
         this.zip = zip;
+        this.consults = consults;
         this.status = status;
         this.num = num;
         this.member_name = member_name;
@@ -35,6 +40,11 @@ public class member_data
     public void setZip(int zip)
     {
         this.zip = zip;
+    }
+
+    public void setConsults(int consults)
+    {
+        this.consults = consults;
     }
 
     public void setStatus(boolean status)
@@ -78,6 +88,11 @@ public class member_data
         return zip;
     }
 
+    public int getConsults()
+    {
+        return consults;
+    }
+
     public boolean isStatus()
     {
         return status;
@@ -107,4 +122,14 @@ public class member_data
     {
         return state;
     }
+
+    /*
+    public void print_personal_report()
+    {
+        if(consults == 0)
+            return;
+
+    }
+    
+     */
 }
