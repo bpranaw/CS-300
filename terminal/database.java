@@ -14,7 +14,7 @@ import java.util.Scanner;
  * ...
  * ...
  * d.shut();
- * ***********************/
+ ************************/
 
 
 public class database
@@ -71,6 +71,7 @@ public class database
                     pd.setCity(a_provider[4]);
                     pd.setState(a_provider[5]);
                     pd.setZip(Integer.parseInt(a_provider[6]));
+
                     provider_list.add(pd);
 
                     count = 0;
@@ -253,7 +254,8 @@ public class database
         }
         System.out.println("ID not found");
     }
-    
+
+
     public static provider_data find_provider(int ID)
     {
         for (provider_data pd : provider_list)
@@ -267,9 +269,20 @@ public class database
         return null;
     }
 
+
     /***
      Member
      ***/
+
+    public static String check_status(boolean status)
+    {
+        if(status)
+            return "active";
+        else
+            return "suspended";
+    }
+
+
     public static void member_reader()
     {
         File file = new File("src\\terminal\\member_list.txt");
@@ -287,19 +300,17 @@ public class database
                 if (count == 8)
                 {
                     member_data md = new member_data();
-                   
-                    md.setNum(a_member[0]);                   
+                    md.setNum(a_member[0]);
                     md.setMember_name(a_member[1]);
                     md.setID(Integer.parseInt(a_member[2]));
                     md.setStreet_name(a_member[3]);
                     md.setCity(a_member[4]);
                     md.setState(a_member[5]);
                     md.setZip(Integer.parseInt(a_member[6]));
-                    //True means that the member has paid their bills
-                    if(a_member[7] == "suspended")
-                    	md.setStatus(false);
+                    if(a_member[7].equals("active"))
+                        md.setStatus(true);
                     else
-                    	md.setStatus(true);
+                        md.setStatus(false);
                     member_list.add(md);
                     count = 0;
                 }
@@ -347,6 +358,8 @@ public class database
             writer.write(md.getState());
             writer.newLine();
             writer.write(Integer.toString(md.getZip()));
+            writer.newLine();
+            writer.write(check_status(md.isStatus()));
             if (index != member_list.size() - 1)
             {
                 writer.newLine();
@@ -361,6 +374,7 @@ public class database
 
     public static void print_members()
     {
+        String status;
         int i = 1;
         for (member_data md : member_list)
         {
@@ -371,6 +385,7 @@ public class database
             System.out.println("member city: " + md.getCity());
             System.out.println("member state: " + md.getState());
             System.out.println("member zip code: " + md.getZip());
+            System.out.println("member status: " + check_status(md.isStatus()));
             System.out.println();
         }
     }
@@ -401,6 +416,17 @@ public class database
         System.out.println("Enter zip code: ");
         integer_input = sc.nextInt();
         md.setZip(integer_input);
+        System.out.println("Enter status: ");
+        string_input = sc.next();
+        if (string_input.equals("active"))
+                md.setStatus(true);
+        else if(string_input.equals("suspended"))
+                md.setStatus(false);
+        else
+        {
+            md.setStatus(true);
+            System.out.println("error, set status to active. May need to update");
+        }
 
         member_list.add(md);
     }
@@ -469,6 +495,18 @@ public class database
                     System.out.println("Enter zip code: ");
                     integer_input = sc.nextInt();
                     md.setZip(integer_input);
+                    System.out.println("Enter status: ");
+                    string_input = sc.next();
+                    if (string_input.equals("active"))
+                        md.setStatus(true);
+                    else if(string_input.equals("suspended"))
+                        md.setStatus(false);
+                    else
+                    {
+                        md.setStatus(true);
+                        System.out.println("error, set status to active. May need to update again");
+                        return;
+                    }
                     System.out.println("Updated");
 
                     return;
@@ -484,6 +522,34 @@ public class database
             }
         }
         System.out.println("ID not found");
+    }
+
+    public static member_data find_member(int ID)
+    {
+        for (member_data md : member_list)
+        {
+            if(ID == md.getID())
+            {
+                return md;
+            }
+        }
+        System.out.println("ID not found");
+        return null;
+    }
+
+    public static int member_verification(int ID)   //1: active; 0: suspended; -1: invalid
+    {
+        for (member_data md : member_list)
+        {
+            if(ID == md.getID())
+            {
+                if(md.isStatus())
+                    return 1;
+                else
+                    return 0;
+            }
+        }
+        return -1;
     }
 
     /***
@@ -605,7 +671,7 @@ public class database
     /***
      *service records
      ***/
-/*
+
     public static int write_record()        //return 0 if service code not found
     {
         Scanner sc = new Scanner(System.in);
@@ -635,10 +701,10 @@ public class database
         string_input = sc.next();
         sr.setComment(string_input);
 
-        record_list.add(sr);
+        //record_list.add(sr);
         return 1;
     }
-*/
+
 
 
 }
