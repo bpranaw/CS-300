@@ -253,10 +253,23 @@ public class database
         }
         System.out.println("ID not found");
     }
+    
+    public static provider_data find_provider(int ID)
+    {
+        for (provider_data pd : provider_list)
+        {
+            if (ID == pd.getID())
+            {
+                return pd;
+            }
+        }
+        System.out.println("ID not found");
+        return null;
+    }
 
     /***
-     *Member
-     * ***/
+     Member
+     ***/
     public static void member_reader()
     {
         File file = new File("src\\terminal\\member_list.txt");
