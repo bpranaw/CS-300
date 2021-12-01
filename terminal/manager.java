@@ -4,7 +4,9 @@ import java.util.Scanner;
 public class manager {
     public void manager_main() {
         System.out.println("You are in the Manager's Terminal");
-        int again;
+        int again = 1;
+        database data = new database();
+        data.boot();
         do {
             int menu = manager_menu();
             if (menu == 1) {
@@ -26,6 +28,7 @@ public class manager {
                 else if (choice == 4) {
                     System.out.println
                     ("You are trying to print a member's record");
+                    data.print_members();
                 }
                 else return;
             }    
@@ -50,6 +53,7 @@ public class manager {
                 else if (choice == 4) {
                     System.out.println
                     ("You are trying to print a provider's record");
+                    data.print_providers();
                 }
                 else return;
             }     
@@ -66,11 +70,12 @@ public class manager {
                 if (again != 1 && again != 2) {
                     System.out.println("Invalid input. Please try again");
                 }
-                else if (again == 1) manager_main();
-            } while (again != 2 && again != 2);
+                // else if (again == 1) manager_main();
+            } while (again != 1 && again != 2);
 
         }while (again == 1);
-               
+        
+        data.shut();
         return;
     }
 
