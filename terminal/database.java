@@ -279,21 +279,27 @@ public class database
             reader = new BufferedReader(new FileReader(file));
             String tempString;
             int count = 0;
-            String[] a_member = new String[7];
+            String[] a_member = new String[8];
             while ((tempString = reader.readLine()) != null)
             {
                 a_member[count] = tempString;
                 count++;
-                if (count == 7)
+                if (count == 8)
                 {
                     member_data md = new member_data();
-                    md.setNum(a_member[0]);
+                   
+                    md.setNum(a_member[0]);                   
                     md.setMember_name(a_member[1]);
                     md.setID(Integer.parseInt(a_member[2]));
                     md.setStreet_name(a_member[3]);
                     md.setCity(a_member[4]);
                     md.setState(a_member[5]);
                     md.setZip(Integer.parseInt(a_member[6]));
+                    //True means that the member has paid their bills
+                    if(a_member[7] == "suspended")
+                    	md.setStatus(false);
+                    else
+                    	md.setStatus(true);
                     member_list.add(md);
                     count = 0;
                 }
