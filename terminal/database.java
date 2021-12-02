@@ -49,7 +49,7 @@ public class database
      * ***/
     public static void provider_reader()
     {
-        File file = new File("src\\terminal\\provider_list.txt");
+        File file = new File("inputFiles\\provider_list.txt");
         BufferedReader reader = null;
         try
         {
@@ -97,7 +97,7 @@ public class database
 
     public static void provider_writer() throws IOException
     {
-        FileWriter fw = new FileWriter("src\\terminal\\provider_list.txt");
+        FileWriter fw = new FileWriter("inputFiles\\provider_list.txt");
 
         BufferedWriter writer = new BufferedWriter(fw);
         int index = 0;
@@ -285,7 +285,7 @@ public class database
 
     public static void member_reader()
     {
-        File file = new File("src\\terminal\\member_list.txt");
+        File file = new File("inputFiles\\member_list.txt");
         BufferedReader reader = null;
         try
         {
@@ -335,7 +335,7 @@ public class database
 
     public static void member_writer() throws IOException
     {
-        FileWriter fw = new FileWriter("src\\terminal\\member_list.txt");
+        FileWriter fw = new FileWriter("inputFiles\\member_list.txt");
 
         BufferedWriter writer = new BufferedWriter(fw);
         int order = 1;
@@ -558,7 +558,7 @@ public class database
 
     public static void pd_reader()
     {
-        File file = new File("src\\terminal\\provider_directory.txt");
+        File file = new File("inputFiles\\provider_directory.txt");
         BufferedReader reader = null;
         try
         {
@@ -671,7 +671,7 @@ public class database
     /***
      *service records
      ***/
-
+/*
     public static int write_record()        //return 0 if service code not found
     {
         Scanner sc = new Scanner(System.in);
@@ -705,6 +705,6 @@ public class database
         return 1;
     }
 
-
+*/
 
 }
