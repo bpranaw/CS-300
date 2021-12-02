@@ -26,7 +26,7 @@ public class database
     //private static ArrayList<service_records> record_list;
 
 
-    public static void boot()       //remember to boot() before use the database
+    public void boot()       //remember to boot() before use the database
     {
         provider_list = new ArrayList<>();
         member_list = new ArrayList<>();
@@ -37,19 +37,21 @@ public class database
         pd_reader();
     }
 
-    public static void shut() throws IOException    //remember to shut() after use the database
+    public void shut() throws IOException    //remember to shut() after use the database
     {
         provider_writer();
         member_writer();
         //pd_writer();
+        
+        print_providers();
     }
 
     /***
      *Provider
      * ***/
-    public static void provider_reader()
+    public void provider_reader()
     {
-        File file = new File("inputFiles\\provider_list.txt");
+        File file = new File("src//inputFiles//provider_list.txt");
         BufferedReader reader = null;
         try
         {
@@ -95,9 +97,9 @@ public class database
         }
     }
 
-    public static void provider_writer() throws IOException
+    public void provider_writer() throws IOException
     {
-        FileWriter fw = new FileWriter("inputFiles\\provider_list.txt");
+        FileWriter fw = new FileWriter("src//inputFiles//provider_list.txt");
 
         BufferedWriter writer = new BufferedWriter(fw);
         int index = 0;
@@ -133,7 +135,7 @@ public class database
 
     }
 
-    public static void print_providers()
+    public void print_providers()
     {
         int i = 1;
         for (provider_data pd : provider_list)
@@ -151,7 +153,7 @@ public class database
 
 
 
-    public static void add_provider()
+    public void add_provider()
     {
         Scanner sc = new Scanner(System.in);
         provider_data pd = new provider_data();
@@ -179,7 +181,7 @@ public class database
         provider_list.add(pd);
     }
 
-    public static void remove_provider()
+    public void remove_provider()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
@@ -201,7 +203,7 @@ public class database
 
     }
 
-    public static void update_provider()
+    public void update_provider()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
@@ -256,7 +258,7 @@ public class database
     }
 
 
-    public static provider_data find_provider(int ID)
+    public provider_data find_provider(int ID)
     {
         for (provider_data pd : provider_list)
         {
@@ -274,7 +276,7 @@ public class database
      Member
      ***/
 
-    public static String check_status(boolean status)
+    public String check_status(boolean status)
     {
         if(status)
             return "active";
@@ -283,9 +285,9 @@ public class database
     }
 
 
-    public static void member_reader()
+    public void member_reader()
     {
-        File file = new File("inputFiles\\member_list.txt");
+        File file = new File("src//inputFiles//member_list.txt");
         BufferedReader reader = null;
         try
         {
@@ -333,9 +335,9 @@ public class database
         }
     }
 
-    public static void member_writer() throws IOException
+    public void member_writer() throws IOException
     {
-        FileWriter fw = new FileWriter("inputFiles\\member_list.txt");
+        FileWriter fw = new FileWriter("src//inputFiles//member_list.txt");
 
         BufferedWriter writer = new BufferedWriter(fw);
         int order = 1;
@@ -372,7 +374,7 @@ public class database
 
     }
 
-    public static void print_members()
+    public void print_members()
     {
         String status;
         int i = 1;
@@ -392,7 +394,7 @@ public class database
 
 
 
-    public static void add_member()
+    public void add_member()
     {
         Scanner sc = new Scanner(System.in);
         member_data md = new member_data();
@@ -432,7 +434,7 @@ public class database
     }
 
 
-    public static void remove_member()
+    public void remove_member()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
@@ -454,7 +456,7 @@ public class database
 
     }
 
-    public static void update_member()
+    public void update_member()
     {
         Scanner sc = new Scanner(System.in);
         int ID;
@@ -524,7 +526,7 @@ public class database
         System.out.println("ID not found");
     }
 
-    public static member_data find_member(int ID)
+    public member_data find_member(int ID)
     {
         for (member_data md : member_list)
         {
@@ -537,7 +539,7 @@ public class database
         return null;
     }
 
-    public static int member_verification(int ID)   //1: active; 0: suspended; -1: invalid
+    public int member_verification(int ID)   //1: active; 0: suspended; -1: invalid
     {
         for (member_data md : member_list)
         {
@@ -556,9 +558,9 @@ public class database
      *provider directory
      ***/
 
-    public static void pd_reader()
+    public void pd_reader()
     {
-        File file = new File("inputFiles\\provider_directory.txt");
+        File file = new File("src/inputFiles/provider_directory.txt");
         BufferedReader reader = null;
         try
         {
@@ -624,7 +626,7 @@ public class database
         writer.close();
     }
 */
-    public static void print_directory()
+    public void print_directory()
     {
         int i = 1;
         for (directory_data dd : directory_list)
@@ -637,7 +639,7 @@ public class database
         }
     }
 
-    public static float search_code(int code)
+    public float search_code(int code)
     {
         Scanner sc = new Scanner(System.in);
         String choice;
