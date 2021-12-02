@@ -1,5 +1,7 @@
 package terminal;
 import java.util.Scanner;
+import java.io.*;
+
 
 public class manager {
     public void manager_main() {
@@ -13,17 +15,21 @@ public class manager {
                 System.out.println
                 ("You are in Member Management");
                 int choice = manage_member();
+
                 if (choice == 1) {
                     System.out.println
                     ("You are trying to add a member");
+                    data.add_member();
                 }       
                 else if (choice == 2) {
                     System.out.println
                     ("You are trying to delete a member");
+                    data.remove_member();
                 }   
                 else if (choice == 3) {
                     System.out.println
                     ("You are trying to update a member");
+                    data.update_member();
                 }
                 else if (choice == 4) {
                     System.out.println
@@ -41,14 +47,17 @@ public class manager {
                 if (choice == 1) {
                     System.out.println
                     ("You are trying to add a provider");
+                    data.add_provider();
                 }       
                 else if (choice == 2) {
                     System.out.println
                     ("You are trying to delete a provider");
+                    data.remove_provider();
                 }   
                 else if (choice == 3) {
                     System.out.println
                     ("You are trying to update a provider");
+                    data.update_provider();
                 }
                 else if (choice == 4) {
                     System.out.println
@@ -75,7 +84,13 @@ public class manager {
 
         }while (again == 1);
         
-        data.shut();
+        try{
+            data.shut();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
         return;
     }
 
