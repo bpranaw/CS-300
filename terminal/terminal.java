@@ -34,7 +34,6 @@ class terminal {
         int parseInt = Integer.parseInt(answer);
         choice = parseInt;
         
-
         if (choice != 1 && choice != 2 && choice != 3){
             System.out.println("Invalid input. Please try again");
             return terminal_main();
