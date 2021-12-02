@@ -90,12 +90,14 @@ public class provider {
         int choice = 0;
         int id = 0;
         String answer;
-      /*do
+        member_data m_data;
+        do
         {
             System.out.println("Please enter the member's ID.");
             answer = input.nextLine();
             id = Integer.parseInt(answer);
-            if(d_base.member_verification(id) == 0)
+            m_data = d_base.find_member(id);
+            if(m_data == null)
             {
                  System.out.println("The member ID is not valid. Enter 1 to enter the member ID again, enter 2 to quit this mode.");
                  answer = input.nextLine();
@@ -106,7 +108,6 @@ public class provider {
         }while(choice != 2);
         if(choice == 2)
             return;
-        */
 
         System.out.println("Please enter the date of service provided(MMDDYYYY)");
         answer = input.nextLine();
@@ -140,14 +141,16 @@ public class provider {
         String comment = input.nextLine();
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
         LocalDateTime now = LocalDateTime.now();
-        /* Write provider report to external file
-        write_report(p_data, dtf.format(now), date, code, comments);//Or use sth like report_data
+        /* Write Provider Report to external file
+        write_p_report(p_data, dtf.format(now), date, code, comments);//Or use sth like report_data
+        Write Member Report to external file
+        write_m_report();//Like above
          */
         System.out.println("This is the fee for this service: " + fee);
         return;
     }
 
-    /*
+    /*print Provider Report for this provider
     public void print_p_report()
     {
     }
