@@ -1,4 +1,5 @@
 package terminal;
+import java.io.IOException;
 import java.util.Scanner;
 
 class terminal {
@@ -16,15 +17,15 @@ class terminal {
             }
 
         } while (choice != 3);
-        return;        
+        return;
     }
 
     public static int terminal_main(){
         int choice; 
         System.out.println("======================");
         System.out.println("Acme Main Terminal");  
-        System.out.println("1. Provider's Termnial");  
-        System.out.println("2. Manager's Termnial");  
+        System.out.println("1. Provider's Terminal");
+        System.out.println("2. Manager's Terminal");
         System.out.println("3. Exit");  
         System.out.println("======================");
         System.out.println("What would you like to do? ");
@@ -38,6 +39,7 @@ class terminal {
             System.out.println("Invalid input. Please try again");
             return terminal_main();
         }
+
         return choice;
     }
     
