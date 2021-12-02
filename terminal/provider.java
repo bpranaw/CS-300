@@ -96,18 +96,27 @@ public class provider {
             System.out.println("Please enter the member's ID.");
             answer = input.nextLine();
             id = Integer.parseInt(answer);
-            m_data = d_base.find_member(id);
-            if(m_data == null)
+            int status = d_base.member_verification(id);
+            if(status != 1)
             {
-                 System.out.println("The member ID is not valid. Enter 1 to enter the member ID again, enter 2 to quit this mode.");
+                if(status == 0)
+                    System.out.println("The member is suspended.");
+                else
+                    System.out.println("The member is not valid.");
+                 System.out.println("Enter 1 to enter the member ID again, enter 2 to quit this mode.");
                  answer = input.nextLine();
                  choice = Integer.parseInt(answer);
             }
             else
+            {
+                System.out.println("The member is valid.");
                 break;
+            }
         }while(choice != 2);
         if(choice == 2)
             return;
+
+        m_data = d_base.find_member(id);
 
         System.out.println("Please enter the date of service provided(MMDDYYYY)");
         answer = input.nextLine();
