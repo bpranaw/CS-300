@@ -1,9 +1,14 @@
 package terminal;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 
 public class database
@@ -313,6 +318,80 @@ public class database
         System.out.println("ID not found");
     }
 
+    public void print_provider_record(){
+        Scanner sc = new Scanner(System.in);
+        int ID;
+        String choice;
+        System.out.println("Enter the provider ID to print: ");
+        ID = sc.nextInt();
+        for (provider_data pd : provider_list)
+        {
+            if (ID == pd.getID())
+            {
+                System.out.println("Provider name: " + pd.getProvider_name());
+                System.out.println("Do you want to print record of this provider? \n1: YES\n2: NO");
+                choice = sc.next();
+                if (choice.equals("1") || choice.equals("YES") || choice.equals("yes") || choice.equals("Yes") || choice.equals("y") || choice.equals("Y"))
+                {
+                    print_provider_record(pd);
+                }
+                if (choice.equals("2") || choice.equals("NO") || choice.equals("No") || choice.equals("no") || choice.equals("n") || choice.equals("N"))
+                {
+                    return;
+                } else
+                {
+                    System.out.println("Error");
+                    return;
+                }
+            }
+        }
+        System.out.println("ID not found");
+    }
+    public void print_provider_record(provider_data pd){
+        PrintWriter out;
+        try {
+            String fileName = "src/Reports/Providers/";
+            Date d = Calendar.getInstance().getTime();
+            DateFormat dFormat = new SimpleDateFormat("MM-dd-yyyy");
+            
+            fileName += pd.getProvider_name() + " " + dFormat.format(d) + ".txt";
+            out = new PrintWriter(fileName);
+            out.println("Provider name: " + pd.getProvider_name());
+            out.println("Provider ID: " + pd.getID());
+            out.println("Provider street name: " + pd.getStreet_name());
+            out.println("Provider city: " + pd.getCity());
+            out.println("Provider state: " + pd.getState());
+            out.println("Provider zip code: " + pd.getZip());
+            out.println("===============");
+            ArrayList<provider_record> record = pd.getProvider_records_list();
+            // float total = 0;
+            if (record == null) {
+                out.println("No record");
+            }
+            else{
+                for (provider_record rec : record)
+                {
+                    out.println("Date of service: " + rec.getDate());
+                    // add date and time received by computer
+                    out.println("Member name: " + rec.getMember_name());
+                    out.println("Member number: " + rec.getMember_ID());
+                    out.println("Service code: " + rec.getService_code());
+                    out.println("Fee to be paid: " + rec.getFee());
+                    out.println("===============");
+                    // total += rec.getFee();
+                }
+                out.println("Total number of consultations with members: " + record.size());
+                // add total fee
+            }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        
+    }
+
     public provider_data find_provider(int ID)
     {
         for (provider_data pd : provider_list)
@@ -580,6 +659,7 @@ public class database
         }
     }
 
+
     public void add_member()
     {
         Scanner sc = new Scanner(System.in);
@@ -651,12 +731,12 @@ public class database
         {
             if (ID == md.getID())
             {
-                System.out.println("provider name: " + md.getMember_name());
-                System.out.println("provider ID: " + md.getID());
-                System.out.println("provider street name: " + md.getStreet_name());
-                System.out.println("provider city: " + md.getCity());
-                System.out.println("provider state: " + md.getState());
-                System.out.println("provider zip code: " + md.getZip());
+                System.out.println("Member name: " + md.getMember_name());
+                System.out.println("Member ID: " + md.getID());
+                System.out.println("Member street name: " + md.getStreet_name());
+                System.out.println("Member city: " + md.getCity());
+                System.out.println("Member state: " + md.getState());
+                System.out.println("Member zip code: " + md.getZip());
                 System.out.println("Do you want to update the information of this member?\n1: YES\n2: NO");
                 choice = sc.next();
                 if (choice.equals("1") || choice.equals("YES") || choice.equals("yes") || choice.equals("Yes") || choice.equals("y") || choice.equals("Y"))
@@ -721,6 +801,74 @@ public class database
         }
         System.out.println("ID not found");
         return null;
+    }
+
+    public void print_member_record(){
+        Scanner sc = new Scanner(System.in);
+        int ID;
+        String choice;
+        System.out.println("Enter the member ID to print: ");
+        ID = sc.nextInt();
+        for (member_data md : member_list)
+        {
+            if (ID == md.getID())
+            {
+                System.out.println("Member name: " + md.getMember_name());
+                System.out.println("Do you want to update the information of this member?\n1: YES\n2: NO");
+                choice = sc.next();
+                if (choice.equals("1") || choice.equals("YES") || choice.equals("yes") || choice.equals("Yes") || choice.equals("y") || choice.equals("Y"))
+                {
+                    print_member_record(md);
+                }
+                if (choice.equals("2") || choice.equals("NO") || choice.equals("No") || choice.equals("no") || choice.equals("n") || choice.equals("N"))
+                {
+                    return;
+                } else
+                {
+                    System.out.println("Error");
+                    return;
+                }
+            }
+        }
+        System.out.println("ID not found");
+    }
+    public void print_member_record(member_data md){
+        PrintWriter out;
+        try {
+            //out = new PrintWriter("src/Reports/Members/test.txt");
+            String fileName = "src/Reports/Members/";
+            Date d = Calendar.getInstance().getTime();
+            DateFormat dFormat = new SimpleDateFormat("MM-dd-yyyy");
+            
+            fileName += md.getMember_name() + " " + dFormat.format(d) + ".txt";
+            out = new PrintWriter(fileName);
+            out.println("Member name: " + md.getMember_name());
+            out.println("Member ID: " + md.getID());
+            out.println("Member street name: " + md.getStreet_name());
+            out.println("Member city: " + md.getCity());
+            out.println("Member state: " + md.getState());
+            out.println("Member zip code: " + md.getZip());
+            out.println("===============");
+            ArrayList<member_record> record = md.getMember_records_list();
+            if (record == null) {
+                out.println("No record");
+            }
+            else{
+                for (member_record rec : record)
+                {
+                    out.println("Date: " + rec.getDate());
+                    out.println("Provider Name: " + rec.getProvider_name());
+                    out.println("Service Name: " + rec.getService_name());
+                    out.println("===============");
+                }
+            }
+
+            out.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        
     }
 
     public int member_verification(int ID)   //1: active; 0: suspended; -1: invalid

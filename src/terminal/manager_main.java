@@ -39,7 +39,7 @@ public class manager_main
                 {
                     System.out.println
                             ("You are trying to print a member's record");
-                    d.print_members();
+                    d.print_member_record();
                 }
                 else return;
             }
@@ -69,7 +69,7 @@ public class manager_main
                 else if (choice == 4) {
                     System.out.println
                             ("You are trying to print a provider's record");
-                    d.print_providers();
+                    d.print_provider_record();
                 }
                 else return;
             }
