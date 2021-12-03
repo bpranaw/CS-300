@@ -6,49 +6,123 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-/***********************
- * Example to use database:
- * database d = new database();
- * d.boot();
- * ...
- * ...
- * ...
- * d.shut();
- ************************/
-
-
 public class database
 {
 
     private static ArrayList<provider_data> provider_list;
     private static ArrayList<member_data> member_list;
-    private static ArrayList<directory_data> directory_list;
-    //private static ArrayList<service_records> record_list;
+    private ArrayList<directory_data> directory_list;
+    private ArrayList<EFT_data> EFT_list;
 
+    public database()
+    {
+        boot();
+    }
 
     public void boot()       //remember to boot() before use the database
     {
         provider_list = new ArrayList<>();
         member_list = new ArrayList<>();
         directory_list = new ArrayList<>();
-        //record_list = new ArrayList<>();
+        EFT_list = new ArrayList<>();
+
         provider_reader();
         member_reader();
         pd_reader();
+        EFT_reader();
     }
 
     public void shut() throws IOException    //remember to shut() after use the database
     {
         provider_writer();
         member_writer();
-        //pd_writer();
-        
-        print_providers();
+
+        member_record_writer();
+        provider_record_writer();
+        EFT_writer();
     }
 
-    /***
-     *Provider
-     * ***/
+
+    public void bill_choc(provider_data pd)
+    {
+        Scanner input = new Scanner(System.in);
+        int choice = 0;
+        int id = 0;
+        String answer;
+        do
+        {
+            System.out.println("Please enter the member's ID.");
+            answer = input.nextLine();
+            id = Integer.parseInt(answer);
+            int status = member_verification(id);
+            if (status != 1)
+            {
+                if (status == 0)
+                    System.out.println("The member is suspended.");
+                else
+                    System.out.println("The member is not valid.");
+                System.out.println("Enter 1 to enter the member ID again, enter 2 to quit this mode.");
+                answer = input.nextLine();
+                choice = Integer.parseInt(answer);
+            } else
+            {
+                System.out.println("The member is valid.");
+                break;
+            }
+        } while (choice != 2);
+        if (choice == 2)
+            return;
+
+        member_data md = find_member(id);
+
+        System.out.println("Please enter the date of service provided(MMDDYYYY)");
+        answer = input.nextLine();
+        //int date = Integer.parseInt(answer);
+        String date = answer;
+        System.out.println("Type 1 to show the Provider's directory. Type 2 to input the service code directly.");
+        answer = input.nextLine();
+        choice = Integer.parseInt(answer);
+        if (choice == 1)
+            print_directory();
+        float fee = 0;
+        do
+        {
+            System.out.println("Please input the 6-digit service code.");
+            answer = input.nextLine();
+            int s_code = Integer.parseInt(answer);
+            fee = search_code(s_code);
+            String service_name = search_sname(s_code);
+            if (fee == 0)
+            {
+                System.out.println("Do you want to enter the service code again? Type 1 to enter the code again, type 2 to quit this mode.");
+                answer = input.nextLine();
+                choice = Integer.parseInt(answer);
+                if (choice != 1)
+                    return;
+            } else
+            {
+                choice = 0;
+            }
+
+            for(member_data m_data :member_list)
+            {
+                if(id == m_data.getID())
+                {
+                    md.add_report(date, pd.getProvider_name(), service_name);
+                    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
+                    LocalDateTime now = LocalDateTime.now();
+                    pd.add_report(date,now.toString(), md.getMember_name(), Integer.toString(md.getID()),Integer.toString(s_code),Float.toString(fee));
+
+                }
+            }
+        } while (choice == 1);
+
+        System.out.println("This is the fee for this service: " + fee);
+        add_EFT(pd.getProvider_name(),Integer.toString(pd.getID()),fee);
+        return;
+    }
+
+
     public void provider_reader()
     {
         File file = new File("src//inputFiles//provider_list.txt");
@@ -134,24 +208,6 @@ public class database
         writer.close();
 
     }
-
-    public void print_providers()
-    {
-        int i = 1;
-        for (provider_data pd : provider_list)
-        {
-            System.out.println(i++);
-            System.out.println("provider name: " + pd.getProvider_name());
-            System.out.println("provider ID: " + pd.getID());
-            System.out.println("provider street name: " + pd.getStreet_name());
-            System.out.println("provider city: " + pd.getCity());
-            System.out.println("provider state: " + pd.getState());
-            System.out.println("provider zip code: " + pd.getZip());
-            System.out.println();
-        }
-    }
-
-
 
     public void add_provider()
     {
@@ -257,7 +313,6 @@ public class database
         System.out.println("ID not found");
     }
 
-
     public provider_data find_provider(int ID)
     {
         for (provider_data pd : provider_list)
@@ -271,19 +326,148 @@ public class database
         return null;
     }
 
-
-    /***
-     Member
-     ***/
+    public void print_providers()
+    {
+        int i = 1;
+        for (provider_data pd : provider_list)
+        {
+            System.out.println(i++);
+            System.out.println("provider name: " + pd.getProvider_name());
+            System.out.println("provider ID: " + pd.getID());
+            System.out.println("provider street name: " + pd.getStreet_name());
+            System.out.println("provider city: " + pd.getCity());
+            System.out.println("provider state: " + pd.getState());
+            System.out.println("provider zip code: " + pd.getZip());
+            System.out.println();
+        }
+    }
 
     public String check_status(boolean status)
     {
-        if(status)
+        if (status)
             return "active";
         else
             return "suspended";
     }
 
+    public void member_record_reader()
+    {
+        for(member_data md:member_list)
+        {
+            String path = md.getMember_name() + ".txt";
+            File filename = new File(path);
+            if (!filename.exists())
+            {
+                continue;
+            }
+            else
+            {
+
+            }
+            if(md.getMember_records_list() != null)
+            {
+                for (int i = 0; i < md.getMember_records_list().size(); i++)
+                {
+                    System.out.println(md.getMember_records_list().get(i).getProvider_name());
+                }
+            }
+        }
+
+    }
+
+    public void member_record_writer(File f,member_data md) throws IOException
+    {
+        try (FileWriter fw = new FileWriter(f, true))
+        {
+
+            for (member_record mr : md.getMember_records_list())
+            {
+                fw.append("\n");
+
+                fw.append(mr.getDate()+"\n");
+
+                fw.append(mr.getProvider_name()+"\n");
+
+                fw.append(mr.getService_name());
+            }
+        }
+    }
+
+    public void member_record_writer() throws IOException
+    {
+        label:
+        for (member_data md : member_list)
+        {
+            if (md.getMember_records_list() != null)
+            {
+                String directory = "src\\reports\\members\\";
+                String target_file = "src\\reports\\members\\" + md.getMember_name() + ".txt";
+
+                File files = new File(directory);
+                File[] fs_list = files.listFiles();
+
+                String file_toCompare;
+
+                for(File f:fs_list)
+                {
+                    if(!f.isDirectory())
+                    {
+                        file_toCompare = f.toString();
+
+                        file_toCompare = file_toCompare.replaceAll("\\d+","");
+                        System.out.println(file_toCompare+"\t"+target_file);
+                        if(file_toCompare.equals(target_file))
+                        {
+                            member_record_writer(f,md);
+                            continue label;
+                        }
+                    }
+                }
+
+                String path = "src\\reports\\members\\" + md.getMember_name() + md.getMember_records_list().get(0).getDate() + ".txt";
+                File filename = new File(path);
+
+                filename.createNewFile();
+
+
+                FileWriter fw = new FileWriter(path);
+
+                BufferedWriter writer = new BufferedWriter(fw);
+
+                writer.write(md.getMember_name());
+                writer.newLine();
+                writer.write(Integer.toString(md.getID()));
+                writer.newLine();
+                writer.write(md.getStreet_name());
+                writer.newLine();
+                writer.write(md.getCity());
+                writer.newLine();
+                writer.write(md.getState());
+                writer.newLine();
+                writer.write(Integer.toString(md.getZip()));
+                writer.newLine();
+
+                int index = 0;
+
+                for (member_record mr : md.getMember_records_list())
+                {
+
+                    writer.write(mr.getDate());
+                    writer.newLine();
+                    writer.write(mr.getProvider_name());
+                    writer.newLine();
+                    writer.write(mr.getService_name());
+                    if (index != member_list.size() - 1)
+                    {
+                        writer.newLine();
+                    }
+                    writer.flush();
+                    index++;
+                }
+                writer.close();
+            }
+        }
+    }
 
     public void member_reader()
     {
@@ -309,7 +493,7 @@ public class database
                     md.setCity(a_member[4]);
                     md.setState(a_member[5]);
                     md.setZip(Integer.parseInt(a_member[6]));
-                    if(a_member[7].equals("active"))
+                    if (a_member[7].equals("active"))
                         md.setStatus(true);
                     else
                         md.setStatus(false);
@@ -380,6 +564,10 @@ public class database
         int i = 1;
         for (member_data md : member_list)
         {
+            if (md.getMember_records_list() != null)
+            {
+                System.out.println("lol");
+            }
             System.out.println(i++);
             System.out.println("member name: " + md.getMember_name());
             System.out.println("member ID: " + md.getID());
@@ -391,8 +579,6 @@ public class database
             System.out.println();
         }
     }
-
-
 
     public void add_member()
     {
@@ -421,9 +607,9 @@ public class database
         System.out.println("Enter status: ");
         string_input = sc.next();
         if (string_input.equals("active"))
-                md.setStatus(true);
-        else if(string_input.equals("suspended"))
-                md.setStatus(false);
+            md.setStatus(true);
+        else if (string_input.equals("suspended"))
+            md.setStatus(false);
         else
         {
             md.setStatus(true);
@@ -432,7 +618,6 @@ public class database
 
         member_list.add(md);
     }
-
 
     public void remove_member()
     {
@@ -453,7 +638,6 @@ public class database
         }
         System.out.println("ID not found");
         return;
-
     }
 
     public void update_member()
@@ -485,7 +669,7 @@ public class database
                     System.out.println("Enter member's ID: ");
                     integer_input = sc.nextInt();
                     md.setID(integer_input);
-                    System.out.println("Enter member's name: ");
+                    System.out.println("Enter street's name: ");
                     string_input = sc.next();
                     md.setStreet_name(string_input);
                     System.out.println("Enter city: ");
@@ -501,7 +685,7 @@ public class database
                     string_input = sc.next();
                     if (string_input.equals("active"))
                         md.setStatus(true);
-                    else if(string_input.equals("suspended"))
+                    else if (string_input.equals("suspended"))
                         md.setStatus(false);
                     else
                     {
@@ -530,7 +714,7 @@ public class database
     {
         for (member_data md : member_list)
         {
-            if(ID == md.getID())
+            if (ID == md.getID())
             {
                 return md;
             }
@@ -543,9 +727,9 @@ public class database
     {
         for (member_data md : member_list)
         {
-            if(ID == md.getID())
+            if (ID == md.getID())
             {
-                if(md.isStatus())
+                if (md.isStatus())
                     return 1;
                 else
                     return 0;
@@ -553,10 +737,6 @@ public class database
         }
         return -1;
     }
-
-    /***
-     *provider directory
-     ***/
 
     public void pd_reader()
     {
@@ -600,32 +780,6 @@ public class database
         }
     }
 
-/*
-    public static void pd_writer() throws IOException
-    {
-        FileWriter fw = new FileWriter("src\\terminal\\provider_directory.txt");
-
-        BufferedWriter writer = new BufferedWriter(fw);
-        int index = 0;
-
-        for (directory_data dd : directory_list)
-        {
-            writer.write(dd.getService_name());
-            writer.newLine();
-            writer.write(Float.toString(dd.getService_fee()));
-            writer.newLine();
-            writer.write(Integer.toString(dd.getService_code()));
-
-            if (index != provider_list.size() - 1)
-            {
-                writer.newLine();
-            }
-            writer.flush();
-            index++;
-        }
-        writer.close();
-    }
-*/
     public void print_directory()
     {
         int i = 1;
@@ -670,43 +824,250 @@ public class database
         return 0;
     }
 
-    /***
-     *service records
-     ***/
-/*
-    public static int write_record()        //return 0 if service code not found
+    public String search_sname(int code)
     {
-        Scanner sc = new Scanner(System.in);
-        service_records sr = new service_records();
-        String string_input;
-        int integer_input;
-
-        System.out.println("Enter service code: ");
-        integer_input = sc.nextInt();
-        float fee = search_code(integer_input);
-        if(fee == 0)
-            return 0;
-        sr.setService_code(integer_input);
-
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-        LocalDateTime now = LocalDateTime.now();
-        string_input = dtf.format(now);
-        sr.setDate_time(string_input);
-        System.out.println("Enter provider's ID: ");
-        integer_input = sc.nextInt();
-        sr.setProvider_ID(integer_input);
-        System.out.println("Enter member's ID: ");
-        integer_input = sc.nextInt();
-        sr.setMember_ID(integer_input);
-
-        System.out.println("Enter comment(optional): ");
-        string_input = sc.next();
-        sr.setComment(string_input);
-
-        //record_list.add(sr);
-        return 1;
+        for (directory_data dd : directory_list)
+        {
+            if (code == dd.getService_code())
+            {
+                return dd.getService_name();
+            }
+        }
+        return null;
     }
 
-*/
+    public void provider_record_writer(File f,provider_data pd) throws IOException
+    {
+
+        try (FileWriter fw = new FileWriter(f, true))
+        {
+
+            for (provider_record pr : pd.getProvider_records_list())
+            {
+                fw.append("\n");
+
+                fw.append(pr.getDate()+"\n");
+
+                fw.append(pr.getTime()+"\n");
+
+                fw.append(pr.getMember_name()+"\n");
+
+                fw.append(pr.getMember_ID()+"\n");
+
+                fw.append(pr.getService_code()+"\n");
+                fw.append(pr.getFee()+"\n");
+            }
+        }
+    }
+
+    public void provider_record_writer() throws IOException
+    {
+        label:
+        for (provider_data pd : provider_list)
+        {
+            if (pd.getProvider_records_list() != null)
+            {
+                String directory = "src\\reports\\providers\\";
+                String target_file = "src\\reports\\providers\\" + pd.getProvider_name() + ".txt";
+
+                File files = new File(directory);
+                File[] fs_list = files.listFiles();
+
+                String file_toCompare;
+
+                for(File f:fs_list)
+                {
+                    if(!f.isDirectory())
+                    {
+                        file_toCompare = f.toString();
+
+                        file_toCompare = file_toCompare.replaceAll("\\d+","");
+                        System.out.println(file_toCompare+"\t"+target_file);
+                        if(file_toCompare.equals(target_file))
+                        {
+                            provider_record_writer(f,pd);
+                            continue label;
+                        }
+                    }
+                }
+
+
+                String path = "src\\reports\\providers\\" + pd.getProvider_name() + pd.getProvider_records_list().get(0).getDate() + ".txt";
+                File filename = new File(path);
+
+                filename.createNewFile();
+
+
+                FileWriter fw = new FileWriter(path);
+
+                BufferedWriter writer = new BufferedWriter(fw);
+
+                writer.write(pd.getProvider_name());
+                writer.newLine();
+                writer.write(Integer.toString(pd.getID()));
+                writer.newLine();
+                writer.write(pd.getStreet_name());
+                writer.newLine();
+                writer.write(pd.getCity());
+                writer.newLine();
+                writer.write(pd.getState());
+                writer.newLine();
+                writer.write(Integer.toString(pd.getZip()));
+                writer.newLine();
+
+                int index = 0;
+
+                for (provider_record pr : pd.getProvider_records_list())
+                {
+
+                    writer.write(pr.getDate());
+                    writer.newLine();
+                    writer.write(pr.getTime());
+                    writer.newLine();
+                    writer.write(pr.getMember_name());
+                    writer.newLine();
+                    writer.write(pr.getMember_ID());
+                    writer.write(pr.getService_code());
+                    writer.newLine();
+                    writer.write(pr.getFee());
+                    if (index != member_list.size() - 1)
+                    {
+                        writer.newLine();
+                    }
+                    writer.flush();
+                    index++;
+                }
+                writer.close();
+            }
+        }
+    }
+
+    //For EFT reader, call in boot()
+    public void EFT_reader()
+    {
+        File file = new File("src\\inputFiles\\EFT_list.txt");
+        BufferedReader reader = null;
+        try
+        {
+            reader = new BufferedReader(new FileReader(file));
+            String tempString;
+            int count = 0;
+            String[] a_eft = new String[3];
+            while ((tempString = reader.readLine()) != null)
+            {
+                a_eft[count] = tempString;
+                count++;
+                if (count == 3)
+                {
+                    EFT_data eft = new EFT_data();
+                    eft.setProvider_name(a_eft[0]);
+                    eft.setNum(a_eft[1]);
+                    eft.setFee(Float.parseFloat(a_eft[2]));
+
+                    EFT_list.add(eft);
+
+                    count = 0;
+                }
+            }
+            reader.close();
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        } finally
+        {
+            if (reader != null)
+            {
+                try
+                {
+                    reader.close();
+                } catch (IOException e1)
+                {
+                }
+            }
+        }
+    }
+
+    public void EFT_writer() throws IOException //Call in shut()
+    {
+        FileWriter fw = new FileWriter("src\\inputFiles\\ETF_list.txt");
+
+        BufferedWriter writer = new BufferedWriter(fw);
+        int index = 0;
+        int order = 1;
+        String num;
+        for (EFT_data eft : EFT_list)
+        {
+            writer.write(eft.getProvider_name());
+            writer.newLine();
+            writer.write(eft.getNum());
+            writer.newLine();
+            writer.write(Float.toString(eft.getFee()));
+            if (index != EFT_list.size() - 1)
+            {
+                writer.newLine();
+            }
+            writer.flush();
+            index++;
+            order++;
+        }
+        //writer.flush();
+        writer.close();
+    }
+
+    public void add_EFT(String name, String id, float fee)
+    {
+        EFT_data eft = new EFT_data();
+        eft.setProvider_name(name);
+        eft.setNum(id);
+        eft.setFee(fee);
+
+        EFT_list.add(eft);
+    }
+
+    public void remove_EFT(String id)
+    {
+        int index = 0;
+        for(EFT_data eft : EFT_list)
+        {
+            if (id == eft.getNum())
+            {
+                EFT_list.remove(index);
+                System.out.println("Removed");
+                return;
+            }
+            index++;
+        }
+        System.out.println("ID not found");
+        return;
+    }
+
+    public void update_EFT(String name, String id, float fee)//Call this function in provider terminal directly
+    {
+        Scanner sc = new Scanner(System.in);
+        int flag = 0;
+        for (EFT_data eft : EFT_list)
+        {
+            if (id == eft.getNum())
+            {
+                eft.setFee(eft.getFee() + fee);
+                flag = 1;
+            }
+        }
+        if(flag == 0)
+            add_EFT(name, id, fee);
+    }
+
+    public void print_EFT()
+    {
+        for (EFT_data eft : EFT_list)
+        {
+            System.out.println("provider name: " + eft.getProvider_name());
+            System.out.println("provider ID number: " + eft.getNum());
+            System.out.println("total fee to be transferred: " + eft.getFee());
+            System.out.println();
+        }
+    }
 
 }
+
+
